@@ -1,3 +1,7 @@
+import com.earldouglas.xwp.ContainerPlugin.autoImport._
+import com.earldouglas.xwp.TomcatPlugin
+import com.earldouglas.xwp.WebappPlugin.autoImport._
+
 name := "spring-scalatra-angular-crud"
 version := "1.0.0"
 scalaVersion := "2.11.8"
@@ -8,38 +12,45 @@ val springBootVersion = "1.3.5.RELEASE"
 val ScalatraVersion = "2.4.0"
 val scalatraStack = Seq(
   "org.scalatra" %% "scalatra" % ScalatraVersion,
+  "org.scalatra" %% "scalatra-scalate" % ScalatraVersion,
   "com.alibaba" % "fastjson" % "1.2.12",
+
+  "javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided",
   "ch.qos.logback" % "logback-classic" % "1.1.5" % "runtime"
 //  "org.scalatra" %% "scalatra-specs2" % ScalatraVersion % "test",
 )
-val springStack = Seq(
-  "org.springframework.boot" % "spring-boot-starter-web" % springBootVersion exclude("org.springframework.boot", "spring-boot-starter-tomcat"),
-  "org.springframework.boot" % "spring-boot-starter-undertow" % springBootVersion
-)
+
 val dbStack = Seq(
   "org.mybatis.spring.boot" % "mybatis-spring-boot-starter" % "1.1.1",
   "com.alibaba" % "druid" % "1.0.15",
   "postgresql" % "postgresql" % "9.1-901.jdbc4"
 )
 
-libraryDependencies ++= scalatraStack ++ springStack ++ dbStack
+libraryDependencies ++= scalatraStack ++ dbStack
 
-mainClass in Compile := Some("me.yuanqingfei.transfer.MyRestApplication")
+enablePlugins(TomcatPlugin)
+//containerPort := 9090
 
-enablePlugins(JavaAppPackaging)
+containerLibs in Tomcat := Seq("com.github.jsimone" % "webapp-runner" % "8.0.33.0" intransitive())
+//containerMain in Tomcat := "webapp.runner.launch.Main"
+
 enablePlugins(sbtdocker.DockerPlugin)
 
+docker <<= docker.dependsOn(webappPrepare)
+
 dockerfile in docker := {
-  val appDir: File = stage.value
-  val targetDir = "/app"
+  //  target in webappPrepare := target.value / "WebContent"
+  val webDir: File = target.value / "webapp"
 
   new Dockerfile {
-    from("192.168.0.117:5000/java")
-    entryPoint(s"$targetDir/bin/${executableScriptName.value}")
-    copy(appDir, targetDir)
+    from("192.168.0.117:5000/tomcat:8.0-jre8")
+    run("rm", "-rf", "/usr/local/tomcat/webapps/ROOT")
+    copy(webDir, "/usr/local/tomcat/webapps/ROOT")
+    //copyRaw("target/webapp", "/var/lib/jetty/webapps/ROOT") //for jetty
     expose(8080)
   }
 }
 
 
-// reference: https://github.com/daggerok/scala-gradle-scalatra-spring-boot
+
+
