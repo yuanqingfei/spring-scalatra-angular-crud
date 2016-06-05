@@ -12,7 +12,6 @@ val springBootVersion = "1.3.5.RELEASE"
 val ScalatraVersion = "2.4.0"
 val scalatraStack = Seq(
   "org.scalatra" %% "scalatra" % ScalatraVersion,
-  "org.scalatra" %% "scalatra-scalate" % ScalatraVersion,
   "com.alibaba" % "fastjson" % "1.2.12",
 
   "javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided",

@@ -5,7 +5,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature
 import me.yuanqingfei.transfer.pojo.{Transfer, TransferList}
 import me.yuanqingfei.transfer.service.TransferService
 import org.scalatra.ScalatraServlet
-import org.scalatra.scalate.ScalateSupport
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -13,9 +13,12 @@ import org.springframework.stereotype.Component
   * Created by aaron on 16-5-28.
   */
 @Component
-class TransferServlet @Autowired()(transferService: TransferService) extends ScalatraServlet with ScalateSupport{
+class TransferServlet @Autowired()(transferService: TransferService) extends ScalatraServlet {
+
+  val logger =  LoggerFactory.getLogger(getClass)
 
   get("/transfers"){
+    logger.info("begin call trasfers")
     val transferList = new TransferList
     val orginalList = transferService.getAll
     transferList.setTotal(orginalList.size)
@@ -56,12 +59,18 @@ class TransferServlet @Autowired()(transferService: TransferService) extends Sca
 
   notFound {
     // remove content type in case it was set through an action
-    contentType = null
-    // Try to render a ScalateTemplate if no route matched
-    findTemplate(requestPath) map { path =>
-      contentType = "text/html"
-      layoutTemplate(path)
-    } orElse serveStaticResource() getOrElse resourceNotFound()
+    contentType = "text/html"
+    serveStaticResource() getOrElse resourceNotFound()
   }
+
+//  notFound {
+//    // remove content type in case it was set through an action
+//    contentType = null
+//    // Try to render a ScalateTemplate if no route matched
+//    findTemplate(requestPath) map { path =>
+//      contentType = "text/html"
+//      layoutTemplate(path)
+//    } orElse serveStaticResource() getOrElse resourceNotFound()
+//  }
 
 }

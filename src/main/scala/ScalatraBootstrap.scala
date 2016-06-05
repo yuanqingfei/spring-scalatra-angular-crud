@@ -1,7 +1,9 @@
 import javax.servlet.ServletContext
 
+import ch.qos.logback.classic.Level
 import me.yuanqingfei.transfer.MyRestApplication
 import me.yuanqingfei.transfer.rest.TransferServlet
+import org.apache.log4j.LogManager
 import org.scalatra.LifeCycle
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
@@ -10,8 +12,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
   */
 class ScalatraBootstrap extends LifeCycle {
 
-
-  override def init(context: ServletContext) {
+  override def init(context: ServletContext){
 
     val springContext = new AnnotationConfigApplicationContext
     springContext.register(classOf[MyRestApplication])
