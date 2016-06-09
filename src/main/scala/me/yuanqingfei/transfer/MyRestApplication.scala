@@ -33,13 +33,6 @@ class MyRestApplication{
     ds.setUsername(jdbcUserName)
     ds
   }
-//
-//  @Bean
-//  def appServletRegistrationBean(appServlet: TransferServlet) = {
-//    new ServletRegistrationBean(appServlet, "/api/*")
-//  }
+
 }
 
-//object MyRestApplication extends App{
-//  SpringApplication.run(classOf[MyRestApplication], args: _*) // bootstrap the application
-//}

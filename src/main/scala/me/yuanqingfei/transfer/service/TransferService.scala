@@ -2,6 +2,7 @@ package me.yuanqingfei.transfer.service
 
 import me.yuanqingfei.transfer.mapper.TransferMapper
 import me.yuanqingfei.transfer.pojo.Transfer
+import org.apache.ibatis.session.RowBounds
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -13,8 +14,8 @@ import scala.beans.BeanProperty
 @Component
 class TransferService @Autowired()(transferMapper: TransferMapper) {
 
-  def getAll(): java.util.List[Transfer] ={
-    transferMapper.getAll()
+  def getAll(offset: Int, limit: Int): java.util.List[Transfer] ={
+    transferMapper.getAll(new RowBounds(offset, limit))
   }
 
   def getTransfer(id: String): Transfer ={

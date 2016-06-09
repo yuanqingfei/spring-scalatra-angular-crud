@@ -2,6 +2,8 @@ package me.yuanqingfei.transfer.mapper
 
 import me.yuanqingfei.transfer.pojo.Transfer
 import org.apache.ibatis.annotations._
+import org.apache.ibatis.mapping.ResultSetType
+import org.apache.ibatis.session.RowBounds
 import org.springframework.stereotype.Component
 
 /**
@@ -14,7 +16,8 @@ trait TransferMapper{
   def getTransfer(@Param("id") id: Int): Transfer
 
   @Select(Array("select * from transfer"))
-  def getAll(): java.util.List[Transfer]
+  @Options(resultSetType=ResultSetType.SCROLL_INSENSITIVE)
+  def getAll(rowBounds: RowBounds): java.util.List[Transfer]
 
   @Insert(Array("insert into transfer(doctor, sender, receiver) values(#{doctor}, #{sender}, #{receiver})"))
   @Options(useGeneratedKeys=true, keyProperty="id")

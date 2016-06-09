@@ -18,13 +18,16 @@ class TransferServlet @Autowired()(transferService: TransferService) extends Sca
   val logger =  LoggerFactory.getLogger(getClass)
 
   get("/transfers"){
-    logger.info("begin call trasfers")
+    val offset:Int = params.getOrElse("skip", "0").toInt
+    val limit = params.getOrElse("limit", "3").toInt
+    val orginalList = transferService.getAll(offset, limit)
+
     val transferList = new TransferList
-    val orginalList = transferService.getAll
     transferList.setTotal(orginalList.size)
     transferList.setResults(orginalList)
     JSON.toJSONString(transferList, SerializerFeature.PrettyFormat)
   }
+
 
   get("/transfers/:id") {
     val transfer = transferService.getTransfer(params("id"))
